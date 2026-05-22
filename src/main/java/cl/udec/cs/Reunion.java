@@ -5,6 +5,9 @@ import java.time.Instant;
 import java.time.Duration;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.stream.Collectors;
 
 public abstract class Reunion {
     private Date fecha;
@@ -12,6 +15,8 @@ public abstract class Reunion {
     private Duration duracionPrevista;
     private Instant horaInicio;
     private Instant horaFin;
+    private boolean iniciada = false;
+    private boolean finalizada = false;
     
     private TipoReunion tipoReunion;
     private Empleado organizador;
@@ -30,36 +35,104 @@ public abstract class Reunion {
         this.asistencias = new ArrayList<>();
     }
 
+    /**
+     * Retorna una copia defensiva de todas las asistencias registradas.
+     */
     public List<Asistencia> obtenerAsistencias() {
-        return new ArrayList<>(); // TODO: Implementar
+        return new ArrayList<>(this.asistencias); 
     }
 
-    public List<Empleado> obtenerAusencias() {
-        return new ArrayList<>(); // TODO: Implementar
-    }
-
+    /**
+     * Filtra la lista de asistencias para retornar únicamente aquellas
+     * que sean instancias de la clase Retraso.
+     */
     public List<Retraso> obtenerRetrasos() {
-        return new ArrayList<>(); // TODO: Implementar
+        List<Retraso> listaRetrasos = new ArrayList<>();
+        for (Asistencia a : this.asistencias) {
+            if (a instanceof Retraso) {
+                listaRetrasos.add((Retraso) a);
+            }
+        }
+        return listaRetrasos;
     }
 
+    /**
+     * Calcula las ausencias realizando una diferencia de conjuntos entre 
+     * los invitados y los asistentes registrados.
+     */
+    public List<Empleado> obtenerAusencias() {
+        List<Empleado> ausentes = new ArrayList<>();
+        
+        // Optimización O(1) para búsquedas usando un Set de IDs
+        Set<String> idsAsistentes = new HashSet<>();
+        for (Asistencia a : this.asistencias) {
+            idsAsistentes.add(a.getEmpleado().getId());
+        }
+
+        // Iteramos sobre las invitaciones para ver quién no está en el Set
+        for (Invitacion inv : this.invitaciones) {
+            // Verificamos si el invitado es un Empleado (útil para el futuro polimorfismo)
+            if (inv.getInvitado() instanceof Empleado) {
+                Empleado emp = (Empleado) inv.getInvitado();
+                if (!idsAsistentes.contains(emp.getId())) {
+                    ausentes.add(emp);
+                }
+            }
+        }
+        return ausentes;
+    }
+
+    /**
+     * Retorna la cantidad total de personas que asistieron (incluyendo retrasos).
+     */
     public int obtenerTotalAsistencia() {
-        return 0; // TODO: Implementar
+        return this.asistencias.size();
     }
 
+    /**
+     * Calcula el porcentaje de asistencia en base a las invitaciones enviadas.
+     */
     public float obtenerPorcentajeAsistencia() {
-        return 0.0f; // TODO: Implementar
+        if (this.invitaciones.isEmpty()) {
+            return 0.0f; // Evitar división por cero
+        }
+        return ((float) this.asistencias.size() / this.invitaciones.size()) * 100.0f;
     }
 
     public float calcularTiempoReal() {
         return 0.0f; // TODO: Implementar
     }
 
-    public void iniciar() {
-        // TODO: Implementar
+    /**
+     * Inicia la reunión marcando el tiempo actual.
+     * @throws ReunionEstadoException si la reunión ya fue iniciada o finalizada.
+     */
+    public void iniciar() throws ReunionEstadoException {
+        if (this.iniciada) {
+            throw new ReunionEstadoException("Error: La reunión ya ha sido iniciada previamente.");
+        }
+        if (this.finalizada) {
+            throw new ReunionEstadoException("Error: No se puede iniciar una reunión que ya ha finalizado.");
+        }
+        
+        this.horaInicio = Instant.now();
+        this.iniciada = true;
     }
 
-    public void finalizar() {
-        // TODO: Implementar
+    /**
+     * Finaliza la reunión marcando el tiempo de cierre.
+     * @throws ReunionEstadoException si se intenta finalizar sin haber iniciado.
+     */
+    public void finalizar() throws ReunionEstadoException {
+        if (!this.iniciada) {
+            throw new ReunionEstadoException("Error: No se puede finalizar una reunión que no ha sido iniciada.");
+        }
+        if (this.finalizada) {
+            throw new ReunionEstadoException("Error: La reunión ya se encuentra finalizada.");
+        }
+        
+        this.horaFin = Instant.now();
+        this.finalizada = true;
     }
 
     // Getters y Setters
