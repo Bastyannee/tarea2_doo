@@ -12,18 +12,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ReunionTest {
 
-    // Objetos base para el entorno de pruebas (Test Fixture)
     private Departamento departamentoSistemas;
     private Empleado organizador;
     private ReunionVirtual reunionVirtual;
 
-    /**
-     * Configuración inicial que se ejecuta ANTES de cada método de prueba.
-     * Garantiza que cada test empiece con un estado limpio e independiente.
-     */
     @BeforeEach
     void setUp() {
-        // Arrange general: Instanciamos los objetos mínimos necesarios
         departamentoSistemas = new Departamento("Sistemas");
         
         organizador = new Empleado(
@@ -34,7 +28,6 @@ class ReunionTest {
                 departamentoSistemas
         );
 
-        // Creamos una implementación concreta (ReunionVirtual) para probar los métodos abstractos de Reunion
         reunionVirtual = new ReunionVirtual(
                 new Date(),
                 Instant.now(),
@@ -42,19 +35,15 @@ class ReunionTest {
                 TipoReunion.TECNICA,
                 organizador,
                 "https://meet.google.com/abc-defg-hij"
-        );
+            );
     }
 
     @Test
     @DisplayName("Caso Normal: Agregar una nota exitosamente a la reunión")
     void testAgregarNotaCasoNormal() {
-        // 1. Arrange (Preparar): Creamos la nota específica para este escenario
         Nota notaEntregable = new Nota("Definir la arquitectura base antes del viernes.");
-
-        // 2. Act (Actuar): Ejecutamos la acción que queremos testear
         reunionVirtual.getNotas().add(notaEntregable);
 
-        // 3. Assert (Verificar): Comprobamos que el resultado sea el esperado
         assertEquals(1, reunionVirtual.getNotas().size(), "La lista de notas debería tener exactamente 1 elemento.");
         assertEquals("Definir la arquitectura base antes del viernes.", 
                 reunionVirtual.getNotas().get(0).getContenido(), 
@@ -62,14 +51,25 @@ class ReunionTest {
     }
 
     @Test
-    @DisplayName("Caso Extremo/Excepción: Intentar finalizar una reunión que no ha iniciado")
+    @DisplayName("Caso Extremo: Intentar finalizar una reunión que no ha iniciado")
     void testFinalizarReunionSinIniciarLanzaExcepcion() {
-        // Arrange: El objeto reunionVirtual ya existe y su horaInicio es null por defecto.
-        
-        // Act & Assert: Verificamos que se lance la excepción correcta al ejecutar el método.
-        // NOTA: Como aún no creamos las excepciones personalizadas, usamos IllegalStateException temporalmente.
-        assertThrows(IllegalStateException.class, () -> {
+        assertThrows(ReunionEstadoException.class, () -> {
             reunionVirtual.finalizar();
-        }, "Debería lanzar IllegalStateException si se intenta finalizar una reunión sin haber sido iniciada.");
+        }, "Debería lanzar ReunionEstadoException al finalizar sin iniciar.");
+    }
+
+    @Test
+    @DisplayName("Lógica: Calcular porcentaje de asistencia correctamente")
+    void testPorcentajeAsistencia() {
+        Empleado invitado2 = new Empleado("2", "Soto", "Ana", "ana@udec.cl", departamentoSistemas);
+        
+        reunionVirtual.getInvitaciones().add(new Invitacion(Instant.now(), organizador));
+        reunionVirtual.getInvitaciones().add(new Invitacion(Instant.now(), invitado2));
+        
+        reunionVirtual.getAsistencias().add(new Asistencia(organizador));
+
+        float porcentaje = reunionVirtual.obtenerPorcentajeAsistencia();
+
+        assertEquals(50.0f, porcentaje, 0.01f, "El porcentaje de asistencia debería ser exactamente 50.0%");
     }
 }

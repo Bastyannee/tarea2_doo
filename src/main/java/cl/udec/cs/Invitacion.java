@@ -1,24 +1,27 @@
 package cl.udec.cs;
 
-public class Nota {
-    private String contenido;
+import java.time.Instant;
 
-    public Nota(String contenido) {
-        this.contenido = contenido;
+public class Invitacion {
+    private Instant hora;
+    private Invitable invitado;
+
+    public Invitacion(Instant hora, Invitable invitado) {
+        this.hora = hora;
+        this.invitado = invitado;
     }
 
-    public String getContenido() {
-        return contenido;
-    }
+    public Instant getHora() { return hora; }
+    public void setHora(Instant hora) { this.hora = hora; }
 
-    public void setContenido(String contenido) {
-        this.contenido = contenido;
-    }
+    public Invitable getInvitado() { return invitado; }
+    public void setInvitado(Invitable invitado) { this.invitado = invitado; }
 
     @Override
     public String toString() {
-        return "Nota{" +
-                "contenido='" + contenido + '\'' +
+        return "Invitacion{" +
+                "hora=" + hora +
+                ", invitado=" + invitado +
                 '}';
     }
 }
