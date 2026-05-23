@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.time.Duration;
 import java.util.List;
 import java.util.ArrayList;
+import cl.udec.cs.ReunionEstadoException;
 
 public abstract class Reunion {
     private Date fecha;
@@ -12,6 +13,8 @@ public abstract class Reunion {
     private Duration duracionPrevista;
     private Instant horaInicio;
     private Instant horaFin;
+    private boolean iniciada = false;
+    private boolean finalizada = false;
     
     private TipoReunion tipoReunion;
     private Empleado organizador;
