@@ -51,7 +51,12 @@ public abstract class Reunion {
     }
 
     public float calcularTiempoReal() {
-        return 0.0f; // TODO: Implementar
+        if(this.horaInicio == null || this.horaFin == null){
+            return 0.0f;
+        }
+        Duration duracion = Duration.between(this.horaInicio, this.horaInicio);
+
+        return duracion.toMillis() / 60000.0f;
     }
 
     public void iniciar() {
