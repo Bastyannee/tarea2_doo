@@ -58,13 +58,36 @@ public abstract class Reunion {
 
         return duracion.toMillis() / 60000.0f;
     }
+    /**
+     * Inicia la reunión registrando la marca de tiempo actual.
+     * Cambia el estado de la reunión a iniciada.
+     */
+    public void iniciar() throws ReunionEstadoException {
+        if (this.iniciada) {
+            throw new ReunionEstadoException("Error: La reunión ya ha sido iniciada previamente.");
+        }
+        if (this.finalizada) {
+            throw new ReunionEstadoException("Error: No se puede iniciar una reunión que ya ha finalizado.");
+        }
 
-    public void iniciar() {
-        // TODO: Implementar
+        this.horaInicio = Instant.now();
+        this.iniciada = true;
     }
 
-    public void finalizar() {
-        // TODO: Implementar
+    /**
+     * Finaliza la reunión registrando la marca de tiempo de término.
+     * Cambia el estado de la reunión a finalizada.
+     */
+    public void finalizar() throws ReunionEstadoException {
+        if (!this.iniciada) {
+            throw new ReunionEstadoException("Error: No se puede finalizar una reunión que no ha sido iniciada.");
+        }
+        if (this.finalizada) {
+            throw new ReunionEstadoException("Error: La reunión ya se encuentra finalizada.");
+        }
+
+        this.horaFin = Instant.now();
+        this.finalizada = true;
     }
 
     // Getters y Setters
