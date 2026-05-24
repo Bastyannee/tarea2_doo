@@ -123,8 +123,6 @@ public abstract class Reunion {
 
         this.horaInicio = Instant.now();
         this.iniciada = true;
-        this.horaInicio = Instant.now();
-        this.iniciada = true;
     }
 
     /**
