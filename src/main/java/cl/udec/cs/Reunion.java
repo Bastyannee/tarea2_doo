@@ -100,9 +100,13 @@ public abstract class Reunion {
     }
 
     public float calcularTiempoReal() {
-        return 0.0f; // TODO: Implementar
-    }
+        if(this.horaInicio == null || this.horaFin == null){
+            return 0.0f;
+        }
+        Duration duracion = Duration.between(this.horaInicio, this.horaFin);
 
+        return duracion.toMillis() / 60000.0f;
+    }
     /**
      * Inicia la reunión marcando el tiempo actual.
      * @throws ReunionEstadoException si la reunión ya fue iniciada o finalizada.
@@ -114,7 +118,7 @@ public abstract class Reunion {
         if (this.finalizada) {
             throw new ReunionEstadoException("Error: No se puede iniciar una reunión que ya ha finalizado.");
         }
-        
+
         this.horaInicio = Instant.now();
         this.iniciada = true;
     }
@@ -130,7 +134,7 @@ public abstract class Reunion {
         if (this.finalizada) {
             throw new ReunionEstadoException("Error: La reunión ya se encuentra finalizada.");
         }
-        
+
         this.horaFin = Instant.now();
         this.finalizada = true;
     }
