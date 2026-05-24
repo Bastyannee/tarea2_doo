@@ -57,7 +57,7 @@ public abstract class Reunion {
         if(this.horaInicio == null || this.horaFin == null){
             return 0.0f;
         }
-        Duration duracion = Duration.between(this.horaInicio, this.horaInicio);
+        Duration duracion = Duration.between(this.horaInicio, this.horaFin);
 
         return duracion.toMillis() / 60000.0f;
     }
