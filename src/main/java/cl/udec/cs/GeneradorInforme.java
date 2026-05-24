@@ -21,6 +21,10 @@ public class GeneradorInforme {
      * @param rutaArchivo Ruta de destino del archivo de texto.
      */
     public static void Informe(Reunion reunion, String rutaArchivo) {
+        if (reunion == null) {
+            throw new IllegalArgumentException("La reunión no puede ser nula.");
+        }
+
         try {
             PrintWriter writer = new PrintWriter(new FileWriter(rutaArchivo));
 

@@ -62,7 +62,7 @@ class DepartamentoTest {
      */
     @Test
     void testGetNombreDepartamento() {
-        assertEquals("Departamento de Ingeniería Informática y Ciencias de la Computación", depto);
+        assertEquals("Departamento de Ingeniería Informática y Ciencias de la Computación", depto.getNombre());
     }
 
     /**

@@ -13,6 +13,10 @@ public class Empleado implements Invitable {
         this.nombre = nombre;
         this.correo = correo;
         this.departamento = departamento;
+
+        if (departamento != null) {
+            departamento.agregarEmpleado(this);
+        }
     }
 
     @Override
@@ -42,7 +46,7 @@ public class Empleado implements Invitable {
                 ", apellidos='" + apellidos + '\'' +
                 ", nombre='" + nombre + '\'' +
                 ", correo='" + correo + '\'' +
-                ", departamento=" + departamento.getNombre() +
-                '}';
+                ", departamento=" + (departamento != null ? departamento.getNombre() : "Sin departamento")
+                + "}";
     }
 }
