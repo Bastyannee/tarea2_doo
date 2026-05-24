@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.stream.Collectors;
+import cl.udec.cs.ReunionEstadoException;
 
 public abstract class Reunion {
     private Date fecha;
@@ -17,7 +18,7 @@ public abstract class Reunion {
     private Instant horaFin;
     private boolean iniciada = false;
     private boolean finalizada = false;
-    
+
     private TipoReunion tipoReunion;
     private Empleado organizador;
     private List<Nota> notas;
@@ -39,7 +40,7 @@ public abstract class Reunion {
      * Retorna una copia defensiva de todas las asistencias registradas.
      */
     public List<Asistencia> obtenerAsistencias() {
-        return new ArrayList<>(this.asistencias); 
+        return new ArrayList<>(this.asistencias);
     }
 
     /**
@@ -57,12 +58,12 @@ public abstract class Reunion {
     }
 
     /**
-     * Calcula las ausencias realizando una diferencia de conjuntos entre 
+     * Calcula las ausencias realizando una diferencia de conjuntos entre
      * los invitados y los asistentes registrados.
      */
     public List<Empleado> obtenerAusencias() {
         List<Empleado> ausentes = new ArrayList<>();
-        
+
         // Optimización O(1) para búsquedas usando un Set de IDs
         Set<String> idsAsistentes = new HashSet<>();
         for (Asistencia a : this.asistencias) {
@@ -107,6 +108,7 @@ public abstract class Reunion {
 
         return duracion.toMillis() / 60000.0f;
     }
+
     /**
      * Inicia la reunión marcando el tiempo actual.
      * @throws ReunionEstadoException si la reunión ya fue iniciada o finalizada.
@@ -119,6 +121,8 @@ public abstract class Reunion {
             throw new ReunionEstadoException("Error: No se puede iniciar una reunión que ya ha finalizado.");
         }
 
+        this.horaInicio = Instant.now();
+        this.iniciada = true;
         this.horaInicio = Instant.now();
         this.iniciada = true;
     }
