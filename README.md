@@ -96,6 +96,8 @@ classDiagram
 
     class Departamento {
         -nombre: String
+        +agregarEmpleado(Empleado) void
+        +getEmpleados() List~Empleado~
         +obtenerCantidadEmpleados() int
         +invitar(Reunion) void
         +getNombre() String
@@ -153,8 +155,8 @@ classDiagram
     }
 
     %% Utilidades y Excepciones
-    class Informe {
-        +generarInforme(Reunion, String) void
+    class GeneradorInforme {
+        +Informe(Reunion, String)$ void
     }
 
     class ReunionEstadoException {
@@ -186,6 +188,6 @@ classDiagram
     Empleado "*" --> "1" Departamento : -departamento
 
     %% Relaciones de Dependencia
-    Informe ..> Reunion : <<use>>
+    GeneradorInforme ..> Reunion : <<use>>
     Reunion ..> ReunionEstadoException : <<use>>
     Reunion ..> DatosIncompletosException : <<use>>
