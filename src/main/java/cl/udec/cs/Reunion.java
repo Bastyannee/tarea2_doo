@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.stream.Collectors;
+import cl.udec.cs.ReunionEstadoException;
 
 public abstract class Reunion {
     private Date fecha;
@@ -17,7 +18,7 @@ public abstract class Reunion {
     private Instant horaFin;
     private boolean iniciada = false;
     private boolean finalizada = false;
-    
+
     private TipoReunion tipoReunion;
     private Empleado organizador;
     private List<Nota> notas;
@@ -39,7 +40,7 @@ public abstract class Reunion {
      * Retorna una copia defensiva de todas las asistencias registradas.
      */
     public List<Asistencia> obtenerAsistencias() {
-        return new ArrayList<>(this.asistencias); 
+        return new ArrayList<>(this.asistencias);
     }
 
     /**
@@ -57,12 +58,12 @@ public abstract class Reunion {
     }
 
     /**
-     * Calcula las ausencias realizando una diferencia de conjuntos entre 
+     * Calcula las ausencias realizando una diferencia de conjuntos entre
      * los invitados y los asistentes registrados.
      */
     public List<Empleado> obtenerAusencias() {
         List<Empleado> ausentes = new ArrayList<>();
-        
+
         // Optimización O(1) para búsquedas usando un Set de IDs
         Set<String> idsAsistentes = new HashSet<>();
         for (Asistencia a : this.asistencias) {
@@ -100,8 +101,24 @@ public abstract class Reunion {
     }
 
     public float calcularTiempoReal() {
-        return 0.0f; // TODO: Implementar
+        if(this.horaInicio == null || this.horaFin == null){
+            return 0.0f;
+        }
+        Duration duracion = Duration.between(this.horaInicio, this.horaFin);
+
+        return duracion.toMillis() / 60000.0f;
     }
+    /**
+     * Inicia la reunión registrando la marca de tiempo actual.
+     * Cambia el estado de la reunión a iniciada.
+     */
+    public void iniciar() throws ReunionEstadoException {
+        if (this.iniciada) {
+            throw new ReunionEstadoException("Error: La reunión ya ha sido iniciada previamente.");
+        }
+        if (this.finalizada) {
+            throw new ReunionEstadoException("Error: No se puede iniciar una reunión que ya ha finalizado.");
+        }
 
     /**
      * Inicia la reunión marcando el tiempo actual.
@@ -114,11 +131,27 @@ public abstract class Reunion {
         if (this.finalizada) {
             throw new ReunionEstadoException("Error: No se puede iniciar una reunión que ya ha finalizado.");
         }
-        
+
+        this.horaInicio = Instant.now();
+        this.iniciada = true;
         this.horaInicio = Instant.now();
         this.iniciada = true;
     }
 
+    /**
+     * Finaliza la reunión registrando la marca de tiempo de término.
+     * Cambia el estado de la reunión a finalizada.
+     */
+    public void finalizar() throws ReunionEstadoException {
+        if (!this.iniciada) {
+            throw new ReunionEstadoException("Error: No se puede finalizar una reunión que no ha sido iniciada.");
+        }
+        if (this.finalizada) {
+            throw new ReunionEstadoException("Error: La reunión ya se encuentra finalizada.");
+        }
+
+        this.horaFin = Instant.now();
+        this.finalizada = true;
     /**
      * Finaliza la reunión marcando el tiempo de cierre.
      * @throws ReunionEstadoException si se intenta finalizar sin haber iniciado.
@@ -130,7 +163,7 @@ public abstract class Reunion {
         if (this.finalizada) {
             throw new ReunionEstadoException("Error: La reunión ya se encuentra finalizada.");
         }
-        
+
         this.horaFin = Instant.now();
         this.finalizada = true;
     }
