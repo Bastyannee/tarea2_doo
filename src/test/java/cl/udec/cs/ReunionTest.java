@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -38,7 +39,7 @@ class ReunionTest {
                 depto
         );
 
-        reunionVirtual = new ReunionVirtual(inst, duration, organizador, "https://meet.google.com/abc-defg-hij", tipoReunion.TECNICA);
+        reunionVirtual = new ReunionVirtual(new Date(), inst, duration, TipoReunion.TECNICA, organizador, "https://meet.google.com/abc-defg-hij");
     }
 
     /**

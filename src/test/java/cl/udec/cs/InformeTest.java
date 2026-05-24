@@ -5,7 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import java.time.Instant;
 import java.time.Duration;
-import java.time.LocalDate;
+import java.util.Date;
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.File;
 
@@ -19,16 +19,17 @@ class InformeTest {
     private final String RUTA_DOCUMENTO = "reporte_salida_test.txt";
     private Empleado organizador;
     private ReunionVirtual sesionOnline;
-    private Informe creadorReportes;
+    private GeneradorInforme creadorReportes;
+    private Departamento depto;
 
     /**
      * Inicializa el entorno de prueba antes de cada método.
      */
     @BeforeEach
     void iniciarComponentes() {
-        creadorReportes = new Informe();
-        organizador = new Empleado("002", "Norambuena Meza", "María José", "marianoram414@gmail.com");
-        sesionOnline = new ReunionVirtual(LocalDate.now(), Instant.now(), Duration.ofMinutes(45), organizador, tipoReunion.TECNICA, "https://meet.google.com/abc-defg-hij");
+        creadorReportes = new GeneradorInforme();
+        organizador = new Empleado("002", "Norambuena Meza", "María José", "marianoram414@gmail.com", depto);
+        sesionOnline = new ReunionVirtual(new Date(), Instant.now(), Duration.ofMinutes(45), TipoReunion.TECNICA, organizador, "https://meet.google.com/abc-defg-hij");
     }
 
     /**
@@ -46,13 +47,13 @@ class InformeTest {
      * Verifica el flujo de generación de informe bajo condiciones normales.
      */
     @Test
-    void testCrearInformeFlujoNormal() {
-        sesionOnline.agregarNota(new Nota("Primer apunte: Configuración de entorno lista."));
-        sesionOnline.agregarNota(new Nota("Segundo apunte: Revisión de arquitectura base de datos."));
-        sesionOnline.agregarAsistencia(organizador);
+    void testCrearInformeFlujoNormal() throws ReunionEstadoException {
+        sesionOnline.getNotas().add(new Nota("Primer apunte: Configuración de entorno lista."));
+        sesionOnline.getNotas().add(new Nota("Segundo apunte: Revisión de arquitectura base de datos."));
+        sesionOnline.getAsistencias().add(new Asistencia(organizador));
         sesionOnline.iniciar();
         sesionOnline.finalizar();
-        creadorReportes.generarInforme(sesionOnline, RUTA_DOCUMENTO);
+        GeneradorInforme.Informe(sesionOnline, RUTA_DOCUMENTO);
         File documentoFinal = new File(RUTA_DOCUMENTO);
 
         assertTrue(documentoFinal.exists(), "Error: El archivo de salida .txt no fue localizado en el disco.");
@@ -65,7 +66,7 @@ class InformeTest {
     @Test
     void testCrearInformeConDatosNulos() {
         assertThrows(Exception.class, () -> {
-            creadorReportes.generarInforme(null, RUTA_DOCUMENTO);
+            GeneradorInforme.Informe(null, RUTA_DOCUMENTO);
         }, "Se esperaba una excepción al intentar procesar un objeto de reunión nulo.");
     }
 }

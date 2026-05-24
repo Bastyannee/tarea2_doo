@@ -6,6 +6,8 @@ import org.junit.jupiter.api.BeforeEach;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Date;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -23,25 +25,25 @@ class DepartamentoTest {
 
     /**
      * Inicializa el entorno de prueba antes de cada método.
-     * @throws DatoInvalidoException si alguno de los datos proporcionados al constructor empleado o Departamento no es válido.
+     * @throws DatosIncompletosException si alguno de los datos proporcionados al constructor empleado o Departamento no es válido.
      */
     @BeforeEach
-    void setUp() throws DatoInvalidoException {
+    void setUp() throws DatosIncompletosException {
         inst = Instant.now();
         duration = Duration.ofHours(2);
         depto = new Departamento("Departamento de Ingeniería Informática y Ciencias de la Computación");
         emp1 = new Empleado("001", "Garrido Fierro", "Tomás Francisco", "tomasgf13@gmail.com", depto);
         emp2 = new Empleado("002", "Norambuena Meza", "María José", "marianoram414@gmail.com", depto);
         emp3 = new Empleado("003", "Pérez Aguayo", "Bastián Antonio", "baperez2024@udec.cl", depto);
-        reunion = new ReunionPresencial(inst, duration, emp1, "412", tipoReunion.TECNICA);
+        reunion = new ReunionPresencial(new Date(), inst, duration, TipoReunion.TECNICA, emp1, "412");
     }
 
     /**
      * Verifica que al agregar un empleado sin departamento al departamento, el empleado quede correctamente asociado a éste.
-     * @throws DatoInvalidoException si los datos del nuevo empleado no son válidos.
+     * @throws DatosIncompletosException si los datos del nuevo empleado no son válidos.
      */
     @Test
-    void testAgregarEmpleado() throws DatoInvalidoException {
+    void testAgregarEmpleado() throws DatosIncompletosException {
         Empleado nuevo = new Empleado("004", "Reveco", "Cristobal", "cristobal.reveco@gmail.com", null);
         depto.agregarEmpleado(nuevo);
         assertNotNull(nuevo.getDepartamento());
@@ -60,7 +62,7 @@ class DepartamentoTest {
      */
     @Test
     void testGetNombreDepartamento() {
-        assertEquals("Departamento de Ingeniería Informática y Ciencias de la Computación", depto.getNombreDepartamento());
+        assertEquals("Departamento de Ingeniería Informática y Ciencias de la Computación", depto);
     }
 
     /**
@@ -73,8 +75,11 @@ class DepartamentoTest {
 
         for (int idx = 0; idx < depto.obtenerCantidadEmpleados(); idx++) {
             Empleado emp = (Empleado) depto.getEmpleados().get(idx);
-            if (emp.invitacion.getReunion().equals(reunion)) {
-                cuentaInvitados++;
+            for (Invitacion inv : reunion.getInvitaciones()) {
+                if (inv.getInvitado().equals(emp)) {
+                    cuentaInvitados++;
+                    break;
+                }
             }
         }
         assertEquals(depto.obtenerCantidadEmpleados(), cuentaInvitados);
