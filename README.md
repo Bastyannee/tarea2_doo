@@ -14,11 +14,13 @@ Para mantener un desarrollo ordenado y profesional, hemos organizado la informac
 * **Gestión de Dependencias:** Apache Maven
 * **Framework de Testing:** JUnit 5
 
-
 ## Equipo de Desarrollo
-* Bastián Pérez
+* Bastián Antonio Pérez Aguayo
 * Tomas Francisco Garrido Fierro
 * Maria Jose Norambuena Meza
+
+---
+
 ## Detalle de la Arquitectura y Relaciones del Diagrama UML
 
 El diseño arquitectónico del sistema se rige estrictamente por los estándares de modelado de la especificación UML y los principios del Diseño Orientado a Objetos (DOO), estructurándose en base a las siguientes definiciones funcionales:
@@ -50,7 +52,10 @@ Las asociaciones (`-->`) indican la presencia de atributos privados que conectan
 Representadas por líneas punteadas con flechas abiertas (`..>`) y tipificadas con el estereotipo `<<use>>`. Indican una relación de uso transitorio donde las clases no se almacenan como atributos estructurales de largo plazo:
 * **`Informe ..> Reunion`:** La clase de utilidad `Informe` (o `GeneradorInforme`) requiere recibir temporalmente por parámetro una instancia de `Reunion` para leer sus colecciones y procesar el archivo de texto de salida `.txt`.
 * **`Reunion ..> Excepciones`:** Los métodos de negocio de la reunión instancian y lanzan de forma efímera las excepciones personalizadas ante la detección de estados inconsistentes (ej. finalizar antes de iniciar).
+
 ---
+
+```mermaid
 classDiagram
     direction BT
 
